@@ -1,0 +1,104 @@
+# Welcome to the Dev Tools Console!
+#
+# You can use Console to explore the Elasticsearch API. See the Elasticsearch API reference to learn more:
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html
+#
+# Here are a few examples to get you started.
+
+
+## Path-ul creat pentru a construi un nou index http://localhost:9200/un_alt_index
+PUT un_alt_index
+
+## Pentru a citi toate index-urile
+GET _cat/indices
+
+###### Creați un index numit locuri.
+PUT locuri
+
+## Pentru a vedea toate index-urile
+GET _cat/indices
+
+## Informatii generale despre acel indice
+GET locuri
+
+## Stergerea unui indice
+DELETE un_alt_index
+
+
+## Pentru a vedea toate index-urile
+GET _cat/indices
+
+
+
+# Alegeți cinci dintre locurile pe care doriți să le vizitați. Pentru fiecare loc, indexați un document care conține numele și țara.
+
+## Crearea unui document cu id random
+POST locuri/_doc
+{ "oras":"Bucuresti"}
+
+
+GET locuri/_search
+
+## Crearea unui document cu id random
+POST locuri/_doc
+{ "oras":"Iasi", "judet":"Iasi" }
+
+GET locuri/_search
+
+
+## Crearea unui document cu id predefinit
+POST locuri/_doc/ct
+{ "oras":"Constanta" }
+
+GET locuri/_search
+
+POST locuri/_bulk
+{"index":{"_id":"888"}}
+{ "oras":"Cluj" }
+{"index":{"_id":"999"}}
+{ "oras":"Timisoara" }
+
+GET locuri/_search
+
+GET locuri/_mapping
+
+POST locuri/_doc
+{ "oras":"Bacău", "populatie":300000 }
+
+
+GET locuri/_mapping
+
+
+POST locuri/_doc
+{ "oras":"Pașcani", "populatie":50000, "este_resendinta": false}
+
+GET locuri/_mapping
+
+#Citiți (GET) fiecare document pentru a verifica conținutul documentului.
+## Cauta prin tot index-ul
+GET locuri/_search
+
+
+GET locuri/_search
+{"size": 2}
+
+
+GET locuri/_search
+{"size": 20}
+
+#Actualizați (UPDATE) un câmp al unui document.
+POST locuri/_doc/BV4706ABBjRGQFQpfoU_
+{ "oras":"Pașcani", "populatie":512345}
+
+
+# Citiți (GET) documentul actualizat pentru a vă asigura că respectivul câmp a fost actualizat.
+GET locuri/_search
+
+# Ștergeți un document din indexul locuri.
+DELETE locuri/_doc/BV4706ABBjRGQFQpfoU_
+
+GET locuri/_doc/BV4706ABBjRGQFQpfoU_
+
+GET locuri/_search
+
+
