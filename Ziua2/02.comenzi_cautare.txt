@@ -1,0 +1,478 @@
+
+GET _cat/indices
+
+# Crearea unui index fara mapping
+PUT products
+
+
+# Verificarea indexilor
+GET _cat/indices
+
+# Verificarea produselor
+GET products
+
+# Verificarea mapping-ului
+GET products/_mapping
+
+# Bulk update de produse
+
+POST products/_bulk
+{"index":{"_id":"1"}}
+{"name":"Apple MacBook Pro","description":"Professional laptop for developers","category":"laptops","brand":"Apple","price":2499.99,"stock":12,"created_at":"2026-01-15"}
+{"index":{"_id":"2"}}
+{"name":"Apple MacBook Air","description":"Lightweight laptop for everyday work","category":"laptops","brand":"Apple","price":1499.99,"stock":25,"created_at":"2026-02-10"}
+{"index":{"_id":"3"}}
+{"name":"Dell XPS 15","description":"Powerful Windows laptop for developers","category":"laptops","brand":"Dell","price":1899.99,"stock":8,"created_at":"2026-02-05"}
+{"index":{"_id":"4"}}
+{"name":"Dell UltraSharp Monitor","description":"Professional 27 inch 4K monitor","category":"monitors","brand":"Dell","price":699.99,"stock":15,"created_at":"2026-03-01"}
+{"index":{"_id":"5"}}
+{"name":"Logitech MX Master 3S","description":"Wireless ergonomic mouse for productivity","category":"accessories","brand":"Logitech","price":99.99,"stock":50,"created_at":"2026-01-20"}
+{"index":{"_id":"6"}}
+{"name":"Logitech MX Keys","description":"Wireless mechanical keyboard for productivity","category":"accessories","brand":"Logitech","price":119.99,"stock":30,"created_at":"2026-02-15"}
+{"index":{"_id":"7"}}
+{"name":"Samsung Galaxy S26","description":"Android smartphone with AMOLED display","category":"phones","brand":"Samsung","price":999.99,"stock":20,"created_at":"2026-03-10"}
+{"index":{"_id":"8"}}
+{"name":"Samsung Galaxy Tab","description":"Android tablet for work and entertainment","category":"tablets","brand":"Samsung","price":799.99,"stock":14,"created_at":"2026-03-12"}
+
+
+# Verificarea produselor
+GET products
+
+# Verificarea mapping-ului dinamic
+GET products/_mapping
+
+DELETE stock
+
+## Construirea unui index cu mapping de la inceput
+PUT magazie
+{"mappings": 
+    {"properties": {
+            "price":{"type": "float"},
+            "stock":{"type": "long"},
+            "created_at":{"type":"date"},
+            "category":{"type":"keyword"},
+            "brand":{"type":"keyword"},
+            "description":{"type":"text"},
+            "name":{
+                "type":"text",
+                "fields": {
+                    "keyword":{"type": "keyword"}
+                }
+            }
+
+        }
+    }
+}
+
+## Verificarea mapping-ului
+GET magazie/_mapping
+
+GET magazie/_search
+
+POST magazie/_bulk
+{"index":{"_id":"1"}}
+{"name":"Apple MacBook Pro","description":"Professional laptop for developers","category":"laptops","brand":"Apple","price":2499.99,"stock":12,"created_at":"2026-01-15"}
+{"index":{"_id":"2"}}
+{"name":"Apple MacBook Air","description":"Lightweight laptop for everyday work","category":"laptops","brand":"Apple","price":1499.99,"stock":25,"created_at":"2026-02-10"}
+{"index":{"_id":"3"}}
+{"name":"Dell XPS 15","description":"Powerful Windows laptop for developers","category":"laptops","brand":"Dell","price":1899.99,"stock":8,"created_at":"2026-02-05"}
+{"index":{"_id":"4"}}
+{"name":"Dell UltraSharp Monitor","description":"Professional 27 inch 4K monitor","category":"monitors","brand":"Dell","price":699.99,"stock":15,"created_at":"2026-03-01"}
+{"index":{"_id":"5"}}
+{"name":"Logitech MX Master 3S","description":"Wireless ergonomic mouse for productivity","category":"accessories","brand":"Logitech","price":99.99,"stock":50,"created_at":"2026-01-20"}
+{"index":{"_id":"6"}}
+{"name":"Logitech MX Keys","description":"Wireless mechanical keyboard for productivity","category":"accessories","brand":"Logitech","price":119.99,"stock":30,"created_at":"2026-02-15"}
+{"index":{"_id":"7"}}
+{"name":"Samsung Galaxy S26","description":"Android smartphone with AMOLED display","category":"phones","brand":"Samsung","price":999.99,"stock":20,"created_at":"2026-03-10"}
+{"index":{"_id":"8"}}
+{"name":"Samsung Galaxy Tab","description":"Android tablet for work and entertainment","category":"tablets","brand":"Samsung","price":799.99,"stock":14,"created_at":"2026-03-12"}
+
+
+GET magazie/_mapping
+
+GET magazie/_search
+{"query": {"match": {
+  "description": "professional"
+}}}
+
+GET magazie/_search
+{"query": {"match": {
+  "description": "laptop"
+}}}
+
+
+## Diferenta intre text vs keyword
+# 1. Cautare dupa text
+GET magazie/_search
+{"query": {"match": {
+  "description": "professional laptop"
+}}}
+
+# 2. Cautare dupa keyword
+# keyword este folosit cu match
+GET magazie/_search
+{"query": {
+    "term": {
+      "category": {
+        "value": "laptops"
+      }
+    }
+}}
+
+GET magazie/_search
+{"query": {
+    "term": {
+      "category": {
+        "value": "Laptops"
+      }
+    }
+}}
+
+GET magazie/_search
+{"query": {
+    "term": {
+      "brand": {
+        "value": "apple"
+      }
+    }
+}}
+
+
+GET magazie/_search
+{"query": {
+    "term": {
+      "brand": {
+        "value": "Apple"
+      }
+    }
+}}
+
+# Cautare text in field name
+GET magazie/_search
+{"query": {"match": {
+  "name": "apple"
+}}}
+
+# Cautare text in field name
+GET magazie/_search
+{"query": {"match": {
+  "name": "Apple"
+}}}
+
+GET magazie/_mapping
+
+## Cautare keyword in field name
+GET magazie/_search
+{"query": {
+    "term": {
+      "name.keyword": {
+        "value": "Apple MacBook Pro"
+      }
+    }
+}}
+
+## Exact match nu functioneaza fiindca este cautare pe keyword
+GET magazie/_search
+{"query": {
+    "term": {
+      "name.keyword": {
+        "value": "apple macbook pro"
+      }
+    }
+}}
+
+
+GET magazie/_mapping
+
+
+GET magazie/_search
+{"query": {
+    "range": {
+      "price": {
+        "gte": 1000
+      }
+    }
+}}
+
+
+GET magazie/_search
+{"query": {
+    "range": {
+      "created_at": {
+        "gte":  "2026-01-01"
+      }
+    }
+}}
+
+
+GET magazie/_search
+{"query": {
+    "range": {
+      "created_at": {
+        "lt":  "2026-01-01"
+      }
+    }
+}}
+
+
+###################
+###
+##. News Dataset
+#####################
+GET _cat/indices
+
+# By default el cauta in 10.000 de intrari
+# Afisarea de 10 default
+GET news/_search
+
+
+# Pentru a cauta toate valorile  209527
+GET news/_search
+{
+  "track_total_hits": true
+}
+ 
+GET news/_search
+{
+  "query": {"range": {
+    "date": {
+      "gte": "2017-01-01",
+      "lte": "2020-01-01"
+    }
+  }}
+}
+
+
+GET news/_search
+{
+  "track_total_hits": true,
+  "query": {"range": {
+    "date": {
+      "gte": "2017-01-01",
+      "lte": "2020-01-01"
+    }
+  }}
+}
+
+
+GET news/_search
+{
+  "query": {"range": {
+    "date": {
+      "gte": "2019-01-01",
+      "lte": "2020-01-01"
+    }
+  }}
+}
+
+
+GET news/_search
+{ 
+  "query": {
+    "match": {
+      "short_description": "Khloe Kardashian Kendall Jenner"
+    }
+  }
+}
+
+
+GET news/_search 
+{
+  "query": {
+    "match": {
+      "short_description":{
+          "query" : "Khloe Kardashian Kendall Jenner",
+          "operator": "and"
+      }
+    }
+  }
+}
+
+GET news/_search 
+{
+  "query": {
+    "match": {
+      "short_description":{
+          "query" : "Khloe Kardashian Kendall Jenner",
+          "operator": "or"
+      }
+    }
+  }
+}
+
+GET news/_search 
+{
+  "query": {
+    "match": {
+      "short_description":{
+          "query" : "Khloe Kardashian Jenner",
+          "operator": "and"
+      }
+    }
+  }
+}
+
+GET news/_search 
+{
+  "query": {
+    "match": {
+      "short_description":{
+          "query" : "Khloe Kardashian Kendall Jenner",
+          "minimum_should_match": 2
+      }
+    }
+  }
+}
+
+
+GET news/_mapping
+
+GET news/_search  
+{
+  "query": {
+    "match_phrase": {
+      "headline": "Show Some Affection"
+    }
+  }
+}
+GET news/_search  
+{
+  "query": {
+    "match_phrase": {
+      "headline": "show some affection"
+    }
+  }
+}
+
+GET news/_search  
+{
+  "query": {
+    "match_phrase": {
+      "headline": "some show affection"
+    }
+  }
+}
+
+## Cautare prin mai multe fielduri
+GET news/_search  
+{
+  "query": {
+    "multi_match": {
+      "query": "show affection",
+      "fields": ["short_description", "headline", "category"]
+    }
+   } 
+}
+
+
+
+## Pentru a face boost pe un anumit field
+GET news/_search  
+{
+  "query": {
+    "multi_match": {
+      "query": "show affection",
+      "fields": ["short_description^2", "headline", "category"]
+    }
+   } 
+}
+
+### Operatori
+GET news/_search
+{
+  "query": {
+    "bool": {
+        "must": [
+          {
+            "match_phrase": {
+              "headline": "Michelle Obama"
+            }
+          }
+        ]
+    }
+  }
+}
+
+GET news/_search
+{
+  "query": {
+    "bool": {
+        "must": [
+          {
+            "match_phrase": {
+              "headline": "Michelle Obama"
+            }
+          }, {
+            "match": {
+              "category": "POLITICS"
+            }
+          }
+        ]
+    }
+  }
+}
+
+GET news/_search
+{
+  "query": {
+    "bool": {
+        "must": [
+          {
+            "match_phrase": {
+              "headline": "Michelle Obama"
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "match": {
+              "category": "WEDDING"
+            }
+          }
+        ]
+    }
+  }
+}
+
+
+
+GET news/_search
+{
+  "query": {
+    "bool": {
+        "must": [
+          {
+            "match": {
+              "headline": "Michelle Obama"
+            }
+          },
+          {
+          "match": {
+              "short_description": "Michelle Obama"
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "match": {
+              "category": "WEDDING"
+            }
+          }
+        ]
+    }
+  }
+}
+
+GET news/_mapping
+
+GET news/_search
+{
+  "query": {
+    "bool": {
+        "must_not": [
+          {}, {}
+        ]
+    }
+  }
+}
+
