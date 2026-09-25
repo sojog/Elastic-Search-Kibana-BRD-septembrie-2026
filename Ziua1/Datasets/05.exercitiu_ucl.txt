@@ -1,0 +1,123 @@
+
+GET ucl/_search
+
+#1. Selectați rândurile în care țara este „Anglia”. 
+GET ucl/_search
+{"query": {"match": {
+  "country": "England"
+}}}
+
+# 2. Afișează rândurile în care „trofeele” sunt mai mari decât 2. 
+GET ucl/_search 
+{"query": {"range": {
+  "trophies": {
+    "gt": 2
+  }
+}}}
+
+# 3. Accesați coloanele „echipă” și „țară” pentru primele 10 rânduri. 
+GET ucl/_search 
+{ "size": 10}
+
+
+# 4. Filtrați echipele din „Spania” 
+GET ucl/_search
+{"query": {"match": {
+  "country": "Spain"
+}}}
+
+# 5. Găsiți toate echipele care au câștigat exact 2 trofee.
+GET ucl/_search
+{"query": {"match": {
+  "trophies": 2
+}}}
+
+
+# 6. Filtrați echipele în care țara este fie „Anglia”, fie „Italia”. 
+GET ucl/_search?q="England","Italy"
+
+GET ucl/_search
+{"query": {"terms": {
+  "country": [
+    "Italy",
+    "England"
+  ]
+}}}
+
+GET ucl/_search
+{"query": 
+{"bool": {"should": [
+        {"term": {"country": "England" }},
+        {"term": {"country": "Italy" }}
+  
+]}}
+}
+
+
+# 7. Selectează echipele care au mai mult de 1 dar mai puțin de 3 trofee. 
+GET ucl/_search 
+{"query": {"range": {
+  "trophies": {
+    "gt": 1,
+    "lt":3
+  }
+}}}
+
+
+
+# 8. Afișați echipele al căror nume conține cuvântul „United“. 
+GET ucl/_search 
+{"query": {"wildcard": {
+  "team": {
+    "value": "*United*"
+  }
+}}
+}
+
+# 9. Fa un bulk update pentru "Real Madrid", "AC Milan", "Bayern" cu valorile 15, 7, 6 
+POST ucl/_bulk
+{"index":{}}
+{
+  "country": "Spain",
+  "id": 20,
+  "team": "Real Madrid",
+  "trophies": 15
+}
+{"index":{}}
+{
+  "country": "Italy",
+  "id": 21,
+  "team": "Milan",
+  "trophies": 7
+}
+{"index":{}}
+{
+  "country": "Germany",
+  "id": 22,
+  "team": "Bayern Munchen",
+  "trophies": 6
+}
+
+
+# 10. Sortați datele după „trofee” în ordine descrescătoare. 
+GET ucl/_search
+{"sort": [
+  {
+    "trophies": {
+      "order": "desc"
+    }
+  }
+]}
+
+
+# 11. Sortați datele atât pe „țară” (crescător) cât și pe „trofee”
+GET ucl/_search
+{"sort": [
+  {
+    "trophies": {
+      "order": "desc"
+    }
+  }, 
+  {"country": {"order": "desc"}}
+]}
+
