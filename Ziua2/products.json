@@ -1,0 +1,16 @@
+{"index":{"_id":"1"}}
+{"name":"Apple MacBook Pro","description":"Professional laptop for developers","category":"laptops","brand":"Apple","price":2499.99,"stock":12,"created_at":"2026-01-15"}
+{"index":{"_id":"2"}}
+{"name":"Apple MacBook Air","description":"Lightweight laptop for everyday work","category":"laptops","brand":"Apple","price":1499.99,"stock":25,"created_at":"2026-02-10"}
+{"index":{"_id":"3"}}
+{"name":"Dell XPS 15","description":"Powerful Windows laptop for developers","category":"laptops","brand":"Dell","price":1899.99,"stock":8,"created_at":"2026-02-05"}
+{"index":{"_id":"4"}}
+{"name":"Dell UltraSharp Monitor","description":"Professional 27 inch 4K monitor","category":"monitors","brand":"Dell","price":699.99,"stock":15,"created_at":"2026-03-01"}
+{"index":{"_id":"5"}}
+{"name":"Logitech MX Master 3S","description":"Wireless ergonomic mouse for productivity","category":"accessories","brand":"Logitech","price":99.99,"stock":50,"created_at":"2026-01-20"}
+{"index":{"_id":"6"}}
+{"name":"Logitech MX Keys","description":"Wireless mechanical keyboard for productivity","category":"accessories","brand":"Logitech","price":119.99,"stock":30,"created_at":"2026-02-15"}
+{"index":{"_id":"7"}}
+{"name":"Samsung Galaxy S26","description":"Android smartphone with AMOLED display","category":"phones","brand":"Samsung","price":999.99,"stock":20,"created_at":"2026-03-10"}
+{"index":{"_id":"8"}}
+{"name":"Samsung Galaxy Tab","description":"Android tablet for work and entertainment","category":"tablets","brand":"Samsung","price":799.99,"stock":14,"created_at":"2026-03-12"}
