@@ -1,0 +1,403 @@
+
+# You can use Console to explore the Elasticsearch API. See the Elasticsearch API reference to learn more:
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html
+#
+# Here are a few examples to get you started.
+
+
+######
+
+# 1. Gășiți articole despre Donald Trump în contextul NATO
+GET news/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "query": "Donald Trump",
+            "fields": ["headline", "short_description"]
+          }
+        },
+        {
+            "multi_match": {
+            "query": "NATO",
+            "fields": ["headline", "short_description"]
+          }}
+      ]
+    }
+  }
+}
+
+# Pentru a nu intoarce intreaga lista de "hits"
+GET news/_search
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "query": "Donald Trump",
+            "fields": ["headline", "short_description"]
+          }
+        },
+        {
+            "multi_match": {
+            "query": "NATO",
+            "fields": ["headline", "short_description"]
+          }}
+      ]
+    }
+  }
+}
+
+
+# 2. Găsiți articole despre Donald Trump scrise de Lee Moran
+GET news/_search 
+{
+  "query": {
+    "bool": {
+    "must": [
+                {
+                    "multi_match": {
+                    "query": "Donald Trump",
+                    "fields": ["headline", "short_description"]
+                    }
+                },
+                {"match_phrase": {
+                  "authors": "Lee Moran"
+                }}
+    
+         ]
+    }
+  }
+}
+
+# 3. Găsiți toate articolele despre Donald Trump înainte ca el să fie președinte
+GET news/_search  
+{ "query":{
+    "bool": {"must": [
+         {  "multi_match": {
+                    "query": "Donald Trump",
+                    "fields": ["headline", "short_description"]
+                    }}
+                    
+    ],
+    "filter": [
+      {
+        "range": {
+        "date": {
+          "lte": "2017-01-01"
+        }
+      }}
+    ]}
+}
+}
+
+
+# 4. Găsiți toate articolele despre Donald Trump care nu sunt în sfera politică.
+GET news/_search  
+{ 
+    "query":{
+    "bool": {
+        "must": [
+         {  "multi_match": {
+                    "query": "Donald Trump",
+                    "fields": ["headline", "short_description"]
+                    }}
+                    
+        ],
+    "must_not": [
+      {
+        "term": {
+          "category": "POLITICS"
+        }
+      }
+    ]
+    }
+    }
+}
+
+# 5. Toate articolele despre Michelle Obama, dar nu îl includ pe Barack
+GET news/_search  
+{ 
+    "query":{
+    "bool": {
+        "must": [
+         {  "multi_match": {
+                    "query": "Michelle Obama",
+                    "fields": ["headline", "short_description"]
+                    }}
+                    
+        ],
+        "must_not": [
+           {
+            "multi_match": {
+              "query": "Barack",
+              "fields": ["headline", "short_description"]
+            }
+           }
+        ]
+    }
+    }
+}
+# 6. Toate articolele care conțin cel puțin 2 surori Kardashian menționate
+GET news/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        { "match": { "headline": "Kim Kardashian" } },
+        { "match": { "headline": "Kourtney Kardashian" } },
+        { "match": { "headline": "Khloe Kardashian" } },
+        { "match": { "headline": "Kendall Jenner" } },
+        { "match": { "headline": "Kylie Jenner" } }
+      ],
+      "minimum_should_match": 2
+    }
+  }
+}
+
+# 7. Găsiți toate articolele despre încălzirea globală din ultimii 4 ani
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+          {"multi_match": {
+            "query": "global warming",
+            "fields": ["headline", "short_description"]
+          }}
+        ],
+        "filter": [
+          { "range": {
+            "date": {
+              "gte": "2018-09-25" 
+            }
+          }}
+        ]
+        }
+        
+    }
+}
+
+
+
+# 8. Găsiți articolele despre rețete care conțin "chocolate" în titlu sau descriere
+
+GET news/_search 
+{"query": {"bool": {
+    "must": [
+  {
+    "multi_match": {
+      "query": "chocolate",
+      "fields": ["headline", "short_description"]
+    }
+  }
+]}}}
+
+
+GET news/_search 
+{"query": {"bool": {
+    "must": [
+  {
+    "multi_match": {
+      "query": "chocolate",
+      "fields": ["headline", "short_description"]
+    }
+  }
+],
+"filter": [
+  {
+    "term": {
+      "category": {
+        "value": "FOOD & DRINK"
+      }
+    }
+  }
+]}}}
+
+
+# 9. Găsiți toate articolele despre Tesla care nu sunt scrise de Elon Musk
+GET news/_search 
+{
+    "query": {
+        "bool": {
+            "must": [
+              {
+                "multi_match": {
+                  "query": "Tesla",
+                  "fields": ["headline", "short_description"]
+                }
+              }
+            ],
+            "must_not": [
+              {
+                "match": {
+                  "authors": "Elon Musk"
+                }
+              }
+            ]
+        }}
+}
+
+# 10. Găsiți articolele despre filme care au primit Oscar în categoria ENTERTAINMENT
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+      
+      { 
+        "multi_match": {
+        "query": "Oscar",
+        "fields": ["headline", "short_description"]
+      }}
+    ],
+    "filter": [
+      {"term": {
+        "category": {
+          "value": "ENTERTAINMENT"
+        }
+      }}
+    ]
+    }}
+
+}
+
+
+#11. Găsiți toate articolele despre pandemie care au fost publicate în 2020
+GET news/_search 
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "query": "pandemic COVID-19 coronavirus",
+            "fields": ["headline", "short_description"]
+          }
+        }
+      ],
+      "filter": [
+        {
+          "range": {
+            "date": {
+              "gte": "2020-01-01",
+              "lte": "2020-12-31"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+# 12. Găsiți articolele despre sport care menționează atât "Lakers" cât și "NBA"
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+              {
+                "multi_match": {
+                  "query": "Lakers",
+                  "fields": ["short_description", "headline"]
+                }
+              },
+              {
+                "multi_match": {
+                  "query": "NBA",
+                  "fields": ["short_description", "headline"]
+                }
+              },
+              {"term": {
+                "category": {
+                  "value": "SPORTS"
+                }
+              }}
+
+            ]
+        }
+    }
+}
+# 13. Găsiți toate articolele despre tehnologie care menționează fie Apple, fie Google
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+              {
+                "multi_match": {
+                  "query": "Apple Google",
+                  "fields": ["short_description", "headline"]
+                }
+              },
+              {"term": {
+                "category": {
+                  "value": "TECH"
+                }
+              }}
+            ]
+        }
+    }
+}
+
+# 14. Găsiți articolele despre modă scrise de autori care au "Vogue" în numele lor
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+              {
+                "match": {
+                  "authors": "Vogue"
+                }
+              }
+            ]
+        }
+    }
+}
+# 15. Găsiți toate articolele despre dezastre naturale din categoria "GREEN"
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+              {
+                "multi_match": {
+                  "query": "earthquake desaster pandemics wildfire",
+                  "fields": ["short_description", "headline"]
+                }
+              },
+              {"term": {
+                "category": {
+                  "value": "GREEN"
+                }
+              }}
+            ]
+        }
+    }
+}
+
+
+
+# 16. Găsiți articolele care menționează universități din Ivy League
+GET news/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+              {
+                "multi_match": {
+                  "query": "Harvard Yale Princeton Columbia Pennsylvania Dartmouth Brown Cornell",
+                  "fields": ["short_description", "headline"]
+                }
+              }
+            ]
+        }
+    }
+}
+
